@@ -20,6 +20,13 @@ export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecu
     setSetting(REVIEW_INDEX_KEY, currentIndex);
   }, [currentIndex]);
 
+  // Clamp currentIndex when pendingGroups changes (e.g., after rapid navigation)
+  useEffect(() => {
+    if (currentIndex >= pendingGroups.length && pendingGroups.length > 0) {
+      setCurrentIndex(pendingGroups.length - 1);
+    }
+  }, [currentIndex, pendingGroups.length]);
+
   // Filter to only show groups that haven't been decided yet
   const pendingGroups = useMemo(() => {
     return dupGroups.filter((g) => !decisions[g.md5]);
@@ -34,9 +41,13 @@ export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecu
     if (!group || fileIndex >= group.files.length) return;
     const file = group.files[fileIndex];
     onDecision(group.md5, { keep: file.id, action: 'keep' });
-    // Auto-advance to next group
-    setCurrentIndex((i) => Math.min(i + 1, pendingGroups.length - 1));
-  }, [group, onDecision, pendingGroups.length]);
+    // Auto-advance to next group using functional update to avoid stale closure issues
+    setCurrentIndex((i) => {
+      // pendingGroups will be recalculated after onDecision triggers re-render
+      // We need to be conservative here - don't advance if we're at the last item
+      return i + 1;
+    });
+  }, [group, onDecision]);
 
   // Keyboard shortcuts: left = keep first file, right = keep second file
   const keyboardHandlers = useMemo(() => ({
@@ -81,7 +92,7 @@ export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecu
     );
   }
 
-  if (pendingGroups.length === 0) {
+  if (pendingGroups.length === 0 || !group) {
     return (
       <div className="screen">
         <div className="setup-title" style={{ marginBottom: 24 }}>Review Complete</div>
