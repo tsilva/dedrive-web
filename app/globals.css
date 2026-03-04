@@ -80,20 +80,24 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 6px;
+  font-size: 12px;
   color: var(--text-dim);
+  background: var(--surface-2);
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
 }
 
 .user-avatar {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .user-email {
-  max-width: 150px;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -357,12 +361,6 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   text-align: left;
-  transition: border-color 0.15s, transform 0.15s;
-}
-
-.feature-item:hover {
-  border-color: var(--accent);
-  transform: translateX(4px);
 }
 
 .feature-icon {
@@ -663,8 +661,25 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
 }
 
 /* Previews */
-.preview-image { max-width: 100%; max-height: 100%; object-fit: contain; }
-.preview-pdf { max-width: 100%; max-height: 100%; }
+.file-preview-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-image { 
+  max-width: 100%; 
+  max-height: 100%; 
+  object-fit: contain;
+  transition: transform 0.15s ease;
+}
+
+.preview-pdf { 
+  max-width: 100%; 
+  max-height: 100%;
+}
 .preview-text {
   width: 100%;
   height: 100%;
@@ -744,12 +759,49 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
   color: var(--text);
 }
 
+.fullscreen-modal-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fullscreen-modal-zoom-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+
+.fullscreen-modal-zoom-btn:hover {
+  background: var(--border);
+  border-color: var(--text-dim);
+}
+
+.fullscreen-modal-zoom-level {
+  font-size: 13px;
+  font-family: var(--mono);
+  color: var(--text-dim);
+  min-width: 48px;
+  text-align: center;
+}
+
 .fullscreen-modal-body {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: auto;
   background: var(--bg);
   padding: 20px;
 }

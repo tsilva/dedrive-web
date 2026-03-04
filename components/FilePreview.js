@@ -9,11 +9,13 @@ export default function FilePreview({ file }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(null);
+    setZoom(1); // Reset zoom when file changes
 
     getPreview(file)
       .then((result) => {
@@ -37,6 +39,22 @@ export default function FilePreview({ file }) {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isFullscreen) {
         setIsFullscreen(false);
+        setZoom(1);
+      }
+      // Zoom shortcuts
+      if (isFullscreen) {
+        if ((e.ctrlKey || e.metaKey) && e.key === '=') {
+          e.preventDefault();
+          setZoom(z => Math.min(4, z + 0.25));
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+          e.preventDefault();
+          setZoom(z => Math.max(0.25, z - 0.25));
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+          e.preventDefault();
+          setZoom(1);
+        }
       }
     };
     
@@ -78,13 +96,20 @@ export default function FilePreview({ file }) {
     );
   }
 
-  const renderPreviewContent = (fullscreen = false) => {
+  const renderPreviewContent = (fullscreen = false, zoomLevel = 1) => {
     if (preview.type === 'image') {
-      return <img src={preview.url} alt={file.name} className="preview-image" />;
+      return (
+        <img 
+          src={preview.url} 
+          alt={file.name} 
+          className="preview-image" 
+          style={zoomLevel !== 1 ? { transform: `scale(${zoomLevel})` } : undefined}
+        />
+      );
     }
 
     if (preview.type === 'pdf') {
-      return <PdfPreview blob={preview.blob} fullscreen={fullscreen} />;
+      return <PdfPreview blob={preview.blob} fullscreen={fullscreen} zoom={zoomLevel} />;
     }
 
     if (preview.type === 'text') {
@@ -115,20 +140,44 @@ export default function FilePreview({ file }) {
       </div>
 
       {isFullscreen && (
-        <div className="fullscreen-modal-overlay" onClick={() => setIsFullscreen(false)}>
+        <div className="fullscreen-modal-overlay" onClick={() => { setIsFullscreen(false); setZoom(1); }}>
           <div className="fullscreen-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="fullscreen-modal-header">
               <div className="fullscreen-modal-title">{file.path || file.name}</div>
-              <button
-                className="fullscreen-modal-close"
-                onClick={() => setIsFullscreen(false)}
-                title="Close (Esc)"
-              >
-                ×
-              </button>
+              <div className="fullscreen-modal-controls">
+                <button
+                  className="fullscreen-modal-zoom-btn"
+                  onClick={() => setZoom(z => Math.max(0.25, z - 0.25))}
+                  title="Zoom out (-)"
+                >
+                  −
+                </button>
+                <span className="fullscreen-modal-zoom-level">{Math.round(zoom * 100)}%</span>
+                <button
+                  className="fullscreen-modal-zoom-btn"
+                  onClick={() => setZoom(z => Math.min(4, z + 0.25))}
+                  title="Zoom in (+)"
+                >
+                  +
+                </button>
+                <button
+                  className="fullscreen-modal-zoom-btn"
+                  onClick={() => setZoom(1)}
+                  title="Reset zoom (0)"
+                >
+                  ↺
+                </button>
+                <button
+                  className="fullscreen-modal-close"
+                  onClick={() => { setIsFullscreen(false); setZoom(1); }}
+                  title="Close (Esc)"
+                >
+                  ×
+                </button>
+              </div>
             </div>
             <div className="fullscreen-modal-body">
-              {renderPreviewContent(true)}
+              {renderPreviewContent(true, zoom)}
             </div>
           </div>
         </div>
