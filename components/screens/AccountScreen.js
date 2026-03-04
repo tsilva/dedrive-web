@@ -3,35 +3,74 @@
 export default function AccountScreen({ user, onSignIn, onSignOut, onStartScan }) {
   return (
     <div className="screen">
-      <div className="login-container">
-        <div className="setup-title" style={{ marginBottom: 24 }}>Account</div>
+      <div className="account-container">
+        <div className="account-header">
+          <div className="account-logo">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h1 className="account-title">Dedrive</h1>
+          <p className="account-subtitle">Find and remove duplicate files in your Google Drive</p>
+        </div>
+
         {!user && (
-          <div style={{ marginBottom: 24, color: '#666', lineHeight: 1.5 }}>
-            <p style={{ marginBottom: 12 }}>
-              This app finds duplicate files in your Google Drive by analyzing file checksums.
-            </p>
-            <p>
-              After signing in, you can:
-            </p>
-            <ul style={{ margin: '8px 0 0 20px', color: '#666' }}>
-              <li>Scan your entire Drive for duplicates</li>
-              <li>Review duplicate groups and choose which to keep</li>
-              <li>Move duplicates to a <code>_dupes</code> folder</li>
-            </ul>
+          <div className="account-features">
+            <div className="feature-item">
+              <div className="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                </svg>
+              </div>
+              <div className="feature-text">
+                <strong>Smart Scan</strong>
+                <span>Analyzes file checksums to find true duplicates</span>
+              </div>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+              </div>
+              <div className="feature-text">
+                <strong>Preview & Compare</strong>
+                <span>Review duplicates side-by-side before deciding</span>
+              </div>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 6h18"/>
+                  <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/>
+                  <path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                </svg>
+              </div>
+              <div className="feature-text">
+                <strong>Safe Cleanup</strong>
+                <span>Moves duplicates to _dupes folder — never deletes</span>
+              </div>
+            </div>
           </div>
         )}
+
         {user && (
           <div className="user-card">
             {user.photoLink && (
-              <img src={user.photoLink} className="user-avatar" alt="" />
+              <img src={user.photoLink} className="user-avatar-large" alt="" />
             )}
-            <div>
+            <div className="user-info-stack">
               <div className="user-name">{user.displayName}</div>
               <div className="user-email">{user.emailAddress}</div>
             </div>
           </div>
         )}
-        <div className="login-actions">
+
+        <div className="account-actions">
           {!user && (
             <button className="btn-google" onClick={onSignIn}>
               <svg className="google-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -44,10 +83,16 @@ export default function AccountScreen({ user, onSignIn, onSignOut, onStartScan }
             </button>
           )}
           {user && (
-            <>
-              <button className="btn" onClick={onSignOut}>Sign Out</button>
-              <button className="btn btn-primary" onClick={onStartScan}>Start Scan</button>
-            </>
+            <div className="signed-in-actions">
+              <button className="btn btn-primary btn-large" onClick={onStartScan}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 16, height: 16 }}>
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="M21 21l-4.35-4.35"/>
+                </svg>
+                Start Scan
+              </button>
+              <button className="btn btn-text" onClick={onSignOut}>Sign Out</button>
+            </div>
           )}
         </div>
       </div>
