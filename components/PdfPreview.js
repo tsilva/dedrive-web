@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from 'react';
 
-export default function PdfPreview({ blob }) {
+export default function PdfPreview({ blob, fullscreen = false }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -19,7 +19,11 @@ export default function PdfPreview({ blob }) {
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       const page = await pdf.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
-      const scale = Math.min(400 / viewport.width, 300 / viewport.height);
+      
+      // Use larger dimensions for fullscreen
+      const maxWidth = fullscreen ? 1200 : 600;
+      const maxHeight = fullscreen ? 800 : 400;
+      const scale = Math.min(maxWidth / viewport.width, maxHeight / viewport.height);
       const scaledViewport = page.getViewport({ scale });
 
       if (cancelled || !canvasRef.current) return;
@@ -36,7 +40,7 @@ export default function PdfPreview({ blob }) {
 
     render().catch(console.error);
     return () => { cancelled = true; };
-  }, [blob]);
+  }, [blob, fullscreen]);
 
   return <canvas ref={canvasRef} className="preview-pdf" />;
 }
