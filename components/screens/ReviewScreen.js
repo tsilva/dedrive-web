@@ -20,17 +20,17 @@ export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecu
     setSetting(REVIEW_INDEX_KEY, currentIndex);
   }, [currentIndex]);
 
+  // Filter to only show groups that haven't been decided yet
+  const pendingGroups = useMemo(() => {
+    return dupGroups.filter((g) => !decisions[g.md5]);
+  }, [dupGroups, decisions]);
+
   // Clamp currentIndex when pendingGroups changes (e.g., after rapid navigation)
   useEffect(() => {
     if (currentIndex >= pendingGroups.length && pendingGroups.length > 0) {
       setCurrentIndex(pendingGroups.length - 1);
     }
   }, [currentIndex, pendingGroups.length]);
-
-  // Filter to only show groups that haven't been decided yet
-  const pendingGroups = useMemo(() => {
-    return dupGroups.filter((g) => !decisions[g.md5]);
-  }, [dupGroups, decisions]);
 
   // Get current group (or null if done)
   const group = pendingGroups[currentIndex] || null;
