@@ -7,20 +7,31 @@ const SCREENS = [
   { id: 'execute', label: 'Execute' },
 ];
 
-export default function Header({ screen, onNavigate }) {
+export default function Header({ screen }) {
+  const getScreenStatus = (id) => {
+    const order = ['account', 'scan', 'review', 'execute'];
+    const currentIdx = order.indexOf(screen);
+    const screenIdx = order.indexOf(id);
+    if (screenIdx < currentIdx) return 'completed';
+    if (screenIdx === currentIdx) return 'active';
+    return 'disabled';
+  };
+
   return (
     <header className="header">
       <div className="logo">DEDRIVE</div>
       <nav className="nav">
-        {SCREENS.map((s) => (
-          <div
-            key={s.id}
-            className={`nav-item${screen === s.id ? ' active' : ''}`}
-            onClick={() => onNavigate(s.id)}
-          >
-            {s.label}
-          </div>
-        ))}
+        {SCREENS.map((s) => {
+          const status = getScreenStatus(s.id);
+          return (
+            <div
+              key={s.id}
+              className={`nav-item nav-item-${status}${status === 'active' ? ' active' : ''}`}
+            >
+              {status === 'completed' ? '✓ ' : ''}{s.label}
+            </div>
+          );
+        })}
       </nav>
     </header>
   );

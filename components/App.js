@@ -12,6 +12,7 @@ import { useScanResults } from '@/hooks/useScanResults';
 import { initAuth, signIn, signOut, setAuthCallback } from '@/lib/auth';
 import { getUserInfo, fetchAllFiles } from '@/lib/drive';
 import { findDuplicates, resolvePaths, computeStats } from '@/lib/dedup';
+import { setSetting, clearDecisions } from '@/lib/state';
 import { clearPreviewCache } from '@/lib/preview';
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -68,11 +69,19 @@ export default function App() {
   const handleSignOut = useCallback(() => {
     signOut();
     clearPreviewCache();
+    clearDecisions();
+    setSetting('reviewIndex', 0);
+    reloadDecisions();
     setUser(null);
     setScreen('account');
-  }, []);
+  }, [reloadDecisions]);
 
   const handleStartScan = useCallback(async () => {
+    // Clear previous decisions and reset review progress
+    clearDecisions();
+    setSetting('reviewIndex', 0);
+    reloadDecisions();
+    
     setScreen('scan');
     setScanning(true);
     setScanError(null);
@@ -87,16 +96,16 @@ export default function App() {
       const groups = findDuplicates(allFiles);
       await save(allFiles, groups);
       setScanning(false);
+      // Auto-advance to review when scan completes
+      if (groups.length > 0) {
+        setScreen('review');
+      }
     } catch (e) {
       setScanError(e.message);
       setScanning(false);
       console.error('Scan failed:', e);
     }
-  }, [save]);
-
-  const handleReview = useCallback(() => {
-    if (dupGroups.length > 0) setScreen('review');
-  }, [dupGroups]);
+  }, [save, reloadDecisions]);
 
   const handleExecute = useCallback(() => {
     setScreen('execute');
@@ -109,7 +118,7 @@ export default function App() {
         onLoad={handleGsiLoad}
         strategy="afterInteractive"
       />
-      <Header screen={screen} onNavigate={setScreen} />
+      <Header screen={screen} />
       <div className="main">
         {screen === 'account' && (
           <AccountScreen
@@ -125,7 +134,6 @@ export default function App() {
             progress={scanProgress}
             stats={stats}
             error={scanError}
-            onReview={handleReview}
           />
         )}
         {screen === 'review' && (
@@ -134,7 +142,6 @@ export default function App() {
             decisions={decisions}
             onDecision={setDecision}
             onExecute={handleExecute}
-            onDecisionsImported={reloadDecisions}
           />
         )}
         {screen === 'execute' && (

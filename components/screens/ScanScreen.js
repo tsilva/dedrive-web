@@ -2,7 +2,7 @@
 
 import { formatSize } from '@/lib/utils';
 
-export default function ScanScreen({ scanning, progress, stats, onReview }) {
+export default function ScanScreen({ scanning, progress, stats }) {
   return (
     <div className="screen">
       <div className="setup-title" style={{ marginBottom: 24 }}>Scan</div>
@@ -14,9 +14,9 @@ export default function ScanScreen({ scanning, progress, stats, onReview }) {
       </div>
       <div className="progress-label">
         {scanning
-          ? `Scanning... Page ${progress.page} \u2022 ${progress.fileCount.toLocaleString()} files`
+          ? `Scanning... Page ${progress.page} • ${progress.fileCount.toLocaleString()} files`
           : stats
-            ? 'Scan complete'
+            ? `Scan complete • ${stats.totalGroups.toLocaleString()} duplicates found`
             : 'Ready to scan'}
       </div>
 
@@ -40,14 +40,6 @@ export default function ScanScreen({ scanning, progress, stats, onReview }) {
               <div className="stat-label">Uncertain (size mismatch)</div>
             </div>
           )}
-        </div>
-      )}
-
-      {stats && (
-        <div className="section-gap">
-          <button className="btn btn-primary" onClick={onReview}>
-            Review Duplicates
-          </button>
         </div>
       )}
     </div>

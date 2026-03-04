@@ -7,16 +7,10 @@ export function useKeyboardShortcuts(active, handlers) {
     function onKeyDown(e) {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-      if (e.key === 'ArrowLeft' || e.key === 'h') {
-        handlers.onPrev?.();
-      } else if (e.key === 'ArrowRight' || e.key === 'l') {
-        handlers.onNext?.();
-      } else if (e.key === '1') {
-        handlers.onKeep?.(0);
-      } else if (e.key === '2') {
-        handlers.onKeep?.(1);
-      } else if (e.key === 's') {
-        handlers.onSkip?.();
+      if (e.key === 'ArrowLeft') {
+        handlers.onLeft?.();
+      } else if (e.key === 'ArrowRight') {
+        handlers.onRight?.();
       }
     }
 

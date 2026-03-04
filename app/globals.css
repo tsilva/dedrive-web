@@ -72,6 +72,11 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
 .nav-item:hover { color: var(--text); background: var(--surface-2); }
 .nav-item.active { color: var(--text); background: var(--border); }
 
+.nav-item-completed { color: var(--accent-keep); }
+.nav-item-completed:hover { color: var(--accent-keep); background: var(--surface-2); }
+
+.nav-item-disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+
 .main {
   flex: 1;
   overflow-y: auto;
