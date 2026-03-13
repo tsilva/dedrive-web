@@ -3,7 +3,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { formatSize, formatDate } from '@/lib/utils';
 import { prefetchPreview } from '@/lib/preview';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import FilePreview from '@/components/FilePreview';
 
 export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecute }) {
@@ -25,21 +24,21 @@ export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecu
   const group = pendingGroups[currentIndex] || null;
   const progress = dupGroups.length - pendingGroups.length;
   const total = dupGroups.length;
+  const decidedGroups = useMemo(() => {
+    return dupGroups.filter((currentGroup) => decisions[currentGroup.md5]?.action === 'keep');
+  }, [decisions, dupGroups]);
+  const moveCount = useMemo(() => {
+    return decidedGroups.reduce((count, currentGroup) => {
+      const keepId = decisions[currentGroup.md5]?.keep;
+      return count + currentGroup.files.filter((file) => file.id !== keepId).length;
+    }, 0);
+  }, [decidedGroups, decisions]);
 
   const handleKeepByIndex = useCallback((fileIndex) => {
     if (!group || fileIndex >= group.files.length) return;
     const file = group.files[fileIndex];
     onDecision(group.md5, { keep: file.id, action: 'keep' });
-    setCurrentIndex((i) => i + 1);
   }, [group, onDecision]);
-
-  // Keyboard shortcuts: left = keep first file, right = keep second file
-  const keyboardHandlers = useMemo(() => ({
-    onLeft: () => handleKeepByIndex(0),
-    onRight: () => handleKeepByIndex(1),
-  }), [handleKeepByIndex]);
-
-  useKeyboardShortcuts(!!group, keyboardHandlers);
 
   // Prefetch previews for upcoming groups (next 2 groups)
   useEffect(() => {
@@ -92,12 +91,22 @@ export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecu
         <div className="review-nav-label">
           Group {progress + 1} of {total} ({pendingGroups.length} remaining)
         </div>
+        <button
+          className="btn"
+          onClick={() => onExecute?.()}
+          disabled={moveCount === 0}
+        >
+          Skip to Execute ({moveCount} file{moveCount === 1 ? '' : 's'} selected)
+        </button>
       </div>
 
       <div className="group-header">
         <div className="group-md5">MD5: {group.md5.slice(0, 12)}...</div>
         <div className="group-info">
           {group.files.length} files • {formatSize(group.wastedSize)} wasted
+        </div>
+        <div className="group-hint">
+          Click a numbered badge to keep that file and continue to the next group.
         </div>
         {group.uncertain && (
           <div className="group-warning">Size mismatch - review carefully</div>
@@ -111,6 +120,17 @@ export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecu
             className="file-card"
             data-index={i}
           >
+            <div className="file-card-toolbar">
+              <button
+                className="file-choice-badge"
+                onClick={() => handleKeepByIndex(i)}
+                aria-label={`Keep file ${i + 1}: ${f.name}`}
+                title={`Keep file ${i + 1}`}
+              >
+                {i + 1}
+              </button>
+              <div className="file-choice-copy">Keep this file</div>
+            </div>
             <div className="file-preview">
               <FilePreview file={f} />
             </div>
@@ -122,21 +142,8 @@ export default function ReviewScreen({ dupGroups, decisions, onDecision, onExecu
                 <span>{formatDate(f.modifiedTime)}</span>
               </div>
             </div>
-            <div className="file-actions">
-              <button
-                className="btn btn-keep"
-                onClick={() => handleKeepByIndex(i)}
-              >
-                Keep
-              </button>
-            </div>
           </div>
         ))}
-      </div>
-
-      <div className="shortcuts" style={{ textAlign: 'center', marginTop: 24 }}>
-        <span><kbd>←</kbd> Keep first file</span>
-        <span style={{ marginLeft: 16 }}><kbd>→</kbd> Keep second file</span>
       </div>
     </div>
   );

@@ -162,7 +162,8 @@ export default function App() {
     }, 0);
 
     trackEvent('review_completed', {
-      reviewed_group_count: dupGroups.length,
+      reviewed_group_count: decidedGroups.length,
+      remaining_group_count: dupGroups.length - decidedGroups.length,
       move_candidate_count: moveCount,
     });
     setScreen('execute');

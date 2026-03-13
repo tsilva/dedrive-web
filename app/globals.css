@@ -619,6 +619,12 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
   margin-top: 4px;
 }
 
+.group-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
 .group-warning {
   font-size: 12px;
   color: var(--accent-warning);
@@ -641,6 +647,41 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
 }
 
 .file-card.file-keep { border-color: var(--accent-keep); }
+
+.file-card-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px 0;
+}
+
+.file-choice-badge {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--accent-keep);
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--accent-keep);
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.file-choice-badge:hover {
+  background: var(--accent-keep);
+  border-color: var(--accent-keep);
+  color: #04130a;
+  transform: translateY(-1px);
+}
+
+.file-choice-copy {
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
 .file-preview {
   height: 450px;
@@ -972,27 +1013,6 @@ code, .mono { font-family: var(--mono); font-size: 0.85em; }
 }
 
 .section-gap { margin-top: 24px; }
-
-/* Keyboard shortcuts legend */
-.shortcuts {
-  display: flex;
-  gap: 16px;
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 16px;
-  justify-content: center;
-}
-
-.shortcuts kbd {
-  display: inline-block;
-  padding: 1px 5px;
-  font-family: var(--mono);
-  font-size: 11px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  margin-right: 2px;
-}
 
 /* Footer */
 .footer {

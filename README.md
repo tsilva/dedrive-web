@@ -27,7 +27,7 @@ Google Drive doesn't tell you about duplicate files. Over time, copies pile up �
 - **Full Drive scan** — fetches all owned files via the Google Drive API with automatic pagination
 - **Smart dedup** — groups files by MD5 checksum, skips Google Workspace files (Docs, Sheets, etc.)
 - **Visual review** — preview images, PDFs, and text files side-by-side before deciding
-- **Keyboard shortcuts** — navigate duplicate decisions with the arrow keys
+- **Multi-file review** — every duplicate card gets a numbered keep badge, and the review can jump straight to execute with partial selections
 - **Non-destructive** — duplicates are moved to a `_dupes/` folder, never deleted
 - **No durable scan cache** — file inventory and review state stay in memory for the active tab
 - **Google Analytics ready** — optional GA4 tracking stays on the public landing page only
@@ -89,8 +89,8 @@ npm run dev
 
 1. **Open `/app`** and sign in with your Google account using the read-only Drive scope
 2. **Scan** fetches all your owned, non-trashed files from Google Drive
-3. **Review** presents duplicate groups sorted by wasted space so you can choose which copy to keep
-4. **Execute** asks for the full Drive scope only when you are ready to move the unchosen duplicates into `_dupes/`, preserving the original directory structure
+3. **Review** presents duplicate groups sorted by wasted space so you can choose which copy to keep by clicking its numbered badge
+4. **Execute** asks for the full Drive scope only when you are ready to move the unchosen duplicates into `_dupes/`, preserving the original directory structure, and you can jump there before reviewing every group
 
 Files are grouped by MD5 checksum. Groups with mismatched file sizes are flagged for careful review.
 
@@ -126,7 +126,6 @@ components/
 hooks/
   useDecisions.js      # In-memory keep decisions for the active tab
   useScanResults.js    # In-memory scan results for the active tab
-  useKeyboardShortcuts.js  # Arrow-key shortcuts during review
   useSettings.js       # App settings from localStorage
 
 lib/
