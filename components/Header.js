@@ -19,7 +19,7 @@ export default function Header({ screen, user }) {
 
   return (
     <header className="header">
-      <div className="logo">DEDRIVE</div>
+      <div className="logo">dedrive</div>
       <nav className="nav">
         {SCREENS.map((s) => {
           const status = getScreenStatus(s.id);

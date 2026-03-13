@@ -30,6 +30,7 @@ Google Drive doesn't tell you about duplicate files. Over time, copies pile up �
 - **Export/import decisions** — save your review progress as JSON and resume later
 - **Persistent state** — scan results stored in IndexedDB, decisions in localStorage
 - **Google Analytics ready** — optional GA4 page and product-event tracking via `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+- **SEO and sharing metadata** — canonical tags, social cards, icons, manifest, robots, and structured data
 
 ## 🚀 Getting Started
 
@@ -53,6 +54,8 @@ The setup script walks you through creating a GCP project, enabling the Drive AP
 
 If you also want GA4 locally, add `NEXT_PUBLIC_GA_MEASUREMENT_ID` to `.env.local` yourself.
 
+Optional verification env vars are also supported if you want to connect the site to Google Search Console, Bing Webmaster Tools, or Yandex later.
+
 ### Manual Setup
 
 If you prefer to configure things yourself:
@@ -65,6 +68,9 @@ If you prefer to configure things yourself:
 ```
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+GOOGLE_SITE_VERIFICATION=your-google-token
+BING_SITE_VERIFICATION=your-bing-token
+YANDEX_SITE_VERIFICATION=your-yandex-token
 ```
 
 5. Install and run:
@@ -102,6 +108,10 @@ Files are grouped by MD5 checksum. Groups with mismatched file sizes are flagged
 app/
   page.js              # Entry point (client-only, SSR disabled)
   layout.js            # Root layout with metadata and analytics tags
+  manifest.js          # Web app manifest
+  icon.js              # Generated app icon
+  apple-icon.js        # Generated Apple touch icon
+  opengraph-image.js   # Generated social preview image
   globals.css          # All styles
 
 components/

@@ -4,74 +4,160 @@ import Script from "next/script";
 import './globals.css';
 
 const SITE_URL = "https://dedrive.tsilva.eu";
-const SITE_TITLE = "Dedrive | Google Drive Duplicate File Manager";
-const SITE_DESCRIPTION = "Find and manage duplicate files in your Google Drive automatically. Identify duplicates by MD5 hash, review and clean up storage. Runs entirely in your browser - private and secure. Free tool.";
+const SITE_NAME = "dedrive";
+const SITE_TITLE = "dedrive | Find and Remove Duplicate Files in Google Drive";
+const SITE_DESCRIPTION = "Scan Google Drive for true duplicate files, review matches side by side, and move extras into a safe _dupes folder. Private, browser-based, and free.";
+const SOCIAL_DESCRIPTION = "Clean up duplicate Google Drive files with a private browser-based tool. Preview matches, keep the right copy, and safely move extras.";
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const GOOGLE_SITE_VERIFICATION = process.env.GOOGLE_SITE_VERIFICATION;
+const BING_SITE_VERIFICATION = process.env.BING_SITE_VERIFICATION;
+const YANDEX_SITE_VERIFICATION = process.env.YANDEX_SITE_VERIFICATION;
 
 export const metadata = {
-  title: SITE_TITLE,
+  title: {
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
+  },
+  applicationName: SITE_NAME,
   description: SITE_DESCRIPTION,
+  referrer: "origin-when-cross-origin",
+  category: "productivity",
+  classification: "File management and storage optimization",
   keywords: [
-    "Google Drive",
-    "duplicate files",
-    "file manager",
-    "storage cleanup",
-    "duplicate finder",
-    "cloud storage",
-    "file organization",
-    "Google Drive tools",
-    "storage management",
-    "duplicate detection",
-    "browser tool",
-    "privacy focused",
+    "google drive duplicate finder",
+    "remove duplicate files google drive",
+    "google drive cleanup",
+    "duplicate file manager",
+    "storage cleanup tool",
+    "browser based file organizer",
+    "private google drive tools",
+    "duplicate file scanner",
+    "free duplicate file finder",
+    "google drive storage saver",
   ],
   authors: [{ name: "Tiago Silva" }],
   creator: "Tiago Silva",
+  publisher: "Tiago Silva",
   metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/icon", type: "image/png", sizes: "32x32" },
+      { url: "/icon", type: "image/png", sizes: "192x192" },
+    ],
+    apple: [{ url: "/apple-icon", type: "image/png", sizes: "180x180" }],
+    shortcut: ["/icon"],
+  },
+  manifest: "/manifest.webmanifest",
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
+  },
+  appleWebApp: {
+    capable: true,
+    title: SITE_NAME,
+    statusBarStyle: "black-translucent",
+  },
+  verification: {
+    google: GOOGLE_SITE_VERIFICATION || undefined,
+    yandex: YANDEX_SITE_VERIFICATION || undefined,
+    other: BING_SITE_VERIFICATION
+      ? {
+          "msvalidate.01": BING_SITE_VERIFICATION,
+        }
+      : undefined,
+  },
   openGraph: {
     title: SITE_TITLE,
-    description: "Find and clean up duplicate files in Google Drive. Browser-based, private, and secure. Free duplicate file manager.",
+    description: SOCIAL_DESCRIPTION,
     type: "website",
     url: SITE_URL,
-    siteName: "Dedrive",
+    siteName: SITE_NAME,
     locale: "en_US",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "dedrive preview card showing Google Drive duplicate cleanup",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_TITLE,
-    description: "Find and manage duplicate files in Google Drive. Private browser-based tool.",
+    description: SOCIAL_DESCRIPTION,
     creator: "@tiagosilva",
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
     },
   },
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0d0d0d",
+  colorScheme: "dark",
+};
+
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "Dedrive",
-  url: SITE_URL,
-  description: SITE_DESCRIPTION,
-  author: {
-    "@type": "Person",
-    name: "Tiago Silva",
-    url: "https://www.tsilva.eu",
-  },
-  applicationCategory: "UtilityApplication",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      publisher: {
+        "@type": "Person",
+        name: "Tiago Silva",
+        url: "https://www.tsilva.eu",
+      },
+    },
+    {
+      "@type": "SoftwareApplication",
+      name: SITE_NAME,
+      url: SITE_URL,
+      image: `${SITE_URL}/opengraph-image`,
+      screenshot: `${SITE_URL}/opengraph-image`,
+      description: SITE_DESCRIPTION,
+      applicationCategory: "UtilityApplication",
+      applicationSubCategory: "FileManagementApplication",
+      operatingSystem: "Any",
+      browserRequirements: "Requires JavaScript and a Google account.",
+      isAccessibleForFree: true,
+      featureList: [
+        "Find Google Drive duplicates by MD5 checksum",
+        "Preview image, PDF, and text files before deciding",
+        "Keep one copy and move extras into a _dupes folder",
+        "Store scan state locally in your browser",
+      ],
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+      author: {
+        "@type": "Person",
+        name: "Tiago Silva",
+        url: "https://www.tsilva.eu",
+      },
+    },
+  ],
 };
 
 export default function RootLayout({ children }) {

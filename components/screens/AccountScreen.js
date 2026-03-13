@@ -12,7 +12,7 @@ export default function AccountScreen({ user, onSignIn, onSignOut, onStartScan }
               <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h1 className="account-title">Dedrive</h1>
+          <h1 className="account-title">dedrive</h1>
           <p className="account-subtitle">Find and remove duplicate files in your Google Drive</p>
         </div>
 
