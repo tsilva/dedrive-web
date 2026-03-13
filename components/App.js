@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 import Header from './Header';
 import Footer from './Footer';
@@ -26,6 +27,9 @@ import { trackEvent, trackException } from '@/lib/analytics';
 const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 
 export default function App() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [screen, setScreen] = useState('account');
   const [gsiLoaded, setGsiLoaded] = useState(false);
   const [user, setUser] = useState(null);
@@ -36,6 +40,7 @@ export default function App() {
   const [scanError, setScanError] = useState(null);
   const { decisions, setDecision, clearDecisions } = useDecisions();
   const { dupGroups, save, clear: clearScanResults } = useScanResults();
+  const autoSignInAttemptedRef = useRef(false);
 
   const stats = dupGroups.length > 0 ? computeStats(dupGroups) : null;
 
@@ -163,6 +168,22 @@ export default function App() {
     await requestWriteAccess();
     setCanWrite(hasWriteAccess());
   }, []);
+
+  useEffect(() => {
+    if (searchParams.get('start') !== 'signin') {
+      autoSignInAttemptedRef.current = false;
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!gsiLoaded || user || screen !== 'account') return;
+    if (searchParams.get('start') !== 'signin') return;
+    if (autoSignInAttemptedRef.current) return;
+
+    autoSignInAttemptedRef.current = true;
+    router.replace(pathname);
+    void handleSignIn();
+  }, [gsiLoaded, handleSignIn, pathname, router, screen, searchParams, user]);
 
   return (
     <div className="app">
